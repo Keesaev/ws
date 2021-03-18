@@ -13,15 +13,24 @@ int main(int argc, char *argv[])
     Sniffer *s = new Sniffer();
     vector<pair<char*, char*>> d;
     if(s->getDevs(d))
-        for(int i = 0; i < d.size(); i++){
-            string a(d[i].first);
+        for(auto i : d){
+            string a(i.first);
             string b;
-            if(d[i].second != NULL)
-                b = d[i].second;
+            if(i.second != NULL)
+                b = i.second;
             else
                 b = "No description available";
-            cout << i + 1 << ": " << a << "\t" << b << "\n";
+            cout << a << "\t" << b << "\n";
         }
+
+    s->setDev(d[0].first);
+    if(s->initPcap())
+        cout << "Device open success\n";
+    else
+        cout << "Device open failure\n";
+    s->startLoopingCapture();
+    std::cout << "Stopping\n";
+
 
     return a.exec();
 }
