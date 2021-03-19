@@ -23,18 +23,18 @@ class Sniffer : public QObject
         u_short ip_len; // length
         u_short ip_id;  // id
         u_short ip_off; // offset
+        /*
         #define IP_RF 0x8000
         #define IP_DF 0x4000
         #define IP_MF 0x2000
         #define IP_OFFMASK 0x1fff
+        */
 
         u_char ip_ttl;  // time to live
         u_char ip_p;    // protocol
         u_short ip_sum; // checksum
         struct in_addr ip_src, ip_dst;
     };
-    #define IP_HL(ip) (((ip)->ip_vhl) & 0x0f)
-    #define IP_V(ip) (((ip)->ip_vhl) >> 4)
 
     typedef u_int tcp_seq;
 
@@ -44,8 +44,9 @@ class Sniffer : public QObject
         tcp_seq th_seq;     // sequence number
         tcp_seq th_ack;     // acknowledge number
         u_char th_offx2;    // offset
-        #define TH_OFF(th) (((th)->th_offx2 & 0xf0) >> 4)
+
         u_char th_flags;
+        /*
         #define TH_FIN 0x01
         #define TH_SYN 0x02
         #define TH_RST 0x04
@@ -55,10 +56,15 @@ class Sniffer : public QObject
         #define TH_ECE 0x40
         #define TH_CWR 0x80
         #define TH_FLAGS (TH_FIN|TH_SYN|TH_RST|TH_ACK|TH_URG|TH_ECE|TH_CWR)
+        */
         u_short th_win;  /* окно */
         u_short th_sum;  /* контрольная сумма */
         u_short th_urp;
     };
+
+    static u_int th_off(const header_tcp *tcp);
+    static u_int ip_hl(const header_ip *ip);
+    static u_int ip_v(const header_ip *ip);
 
 public:
     explicit Sniffer(QObject *parent = nullptr);

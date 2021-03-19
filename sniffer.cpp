@@ -66,11 +66,23 @@ void Sniffer::startLoopingCapture(){
     pcap_loop(m_handle, 10, handlePacket, NULL);
 }
 
+u_int Sniffer::th_off(const header_tcp *tcp){
+    return (((tcp)->th_offx2 & 0xf0) >> 4);
+}
+
+u_int Sniffer::ip_hl(const header_ip *ip){
+    return (((ip)->ip_vhl) & 0x0f);
+}
+
+u_int Sniffer::ip_v(const header_ip *ip){
+    return (((ip)->ip_vhl) >> 4);
+}
+
 void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
                            const u_char *bytes){
     const struct header_ethernet *ethernet;
     const struct header_ip *ip;
-    const struct header_tcp *tcp;
+    const struct header_tcp *tcp = new header_tcp();
     u_char *payload;
 
     u_int size_ip;
@@ -78,13 +90,13 @@ void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
 
     ethernet = (struct header_ethernet*)(bytes);
     ip = (struct header_ip*)(bytes + 14);
-    size_ip = IP_HL(ip)*4;
+    size_ip = ip_hl(ip)*4;
     if(size_ip < 20){
         printf("   * Invalid IP header length: %u bytes\n", size_ip);
             return;
     }
     tcp = (struct header_tcp*)(bytes + 14 + size_ip);
-    size_tcp = TH_OFF(tcp)*4;
+    size_tcp = th_off(tcp)*4;
     if(size_tcp < 20){
         printf("   * Invalid TCP header length: %u bytes\n", size_tcp);
             return;
