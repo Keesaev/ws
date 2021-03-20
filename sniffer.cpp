@@ -1,4 +1,5 @@
 // https://www.tcpdump.org/manpages/pcap.3pcap.html
+// https://habr.com/ru/post/337840/
 
 #include "sniffer.h"
 
