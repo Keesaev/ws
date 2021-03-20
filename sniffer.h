@@ -6,6 +6,9 @@
 #include <QDebug>
 #include <vector>
 #include "headers.h"
+#include <sstream>
+#include <iostream>
+#include <iomanip>
 
 class Sniffer : public QObject
 {

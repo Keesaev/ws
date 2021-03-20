@@ -21,13 +21,21 @@ public:
 
         /* Тут инкапсулированный пакет */
 
-        // 4 байта
-        u_char ether_fcs[4];    // Контрольная сумма
+        // 4 байта Контрольная сумма
+
+        static std::string getMac(const u_char addr[]){
+            std::string s = "";
+            for(int i = 0; i < 6; i++){
+                s += Headers::byteToHexString(addr[i]) + ":";
+            }
+            s[s.length() - 1] = ' ';
+            return s;
+        }
     };
     struct Header_ip{
         // 1 байт
         // 4 бита версия и еще 4 бита длина интернет-заголовка
-        u_char ip_vhl;  // Версия (IPv4 или IPv6)
+        u_char ip_vhl;  // Version + Header Length
         // 1 байт
         u_char ip_tos;  // Type of service (тип обслуживания)
         // 2 байта
@@ -46,6 +54,22 @@ public:
         // по 4 байта адреса источника и назначения
         struct in_addr ip_src, ip_dst;
         // Далее рандомное число байт для флагов
+
+        static std::string getAddress(in_addr addr){
+            char cAddr[INET_ADDRSTRLEN];
+            inet_ntop(AF_INET, &(addr), cAddr, INET_ADDRSTRLEN);
+            return cAddr;
+        }
+
+        /* Этот метод нужен для получения длины заголовка IP,
+         *  так как он занимает половину переменной длиной 8 бит*/
+        static u_int getHeaderLength(const Header_ip *ip){
+            return (((ip)->ip_vhl) & 0x0f);
+        }
+
+        static u_int getVersion(const Header_ip *ip){
+            return (((ip)->ip_vhl) >> 4);
+        }
 
         /*
         #define IP_RF 0x8000
@@ -79,6 +103,9 @@ public:
         // 2 байта
         u_short th_urp;     // Urgent point (указатель важности)
 
+        static u_int getOffset(const Header_tcp *tcp){
+            return (((tcp)->th_offx2 & 0xf0) >> 4);
+        }
         /*
         #define TH_FIN 0x01
         #define TH_SYN 0x02
@@ -92,18 +119,10 @@ public:
         */
     };
 
-    /*
-     *
-     */
-    static u_int th_off(const Header_tcp *tcp);
+    static std::string byteToHexString(u_char a);
 
-    /* Этот метод нужен для получения длины заголовка IP,
-     *  так как он занимает половину переменной длиной 8 бит*/
-
-    static u_int ip_hl(const Header_ip *ip);
-
-    static u_int ip_v(const Header_ip *ip);
-
+private:
+    static std::string getSingleHexRegister(int b);
 signals:
 
 };

@@ -79,24 +79,29 @@ void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
 
     ethernet = (struct Headers::Header_ethernet*)(bytes);
     ip = (struct Headers::Header_ip*)(bytes + 14);
-    size_ip = Headers::ip_hl(ip)*4;
+    size_ip = Headers::Header_ip::getHeaderLength(ip)*4;
     if(size_ip < 20){
         printf("   * Invalid IP header length: %u bytes\n", size_ip);
             return;
     }
     tcp = (struct Headers::Header_tcp*)(bytes + 14 + size_ip);
-    size_tcp = Headers::th_off(tcp)*4;
+    size_tcp = Headers::Header_tcp::getOffset(tcp)*4;
     if(size_tcp < 20){
         printf("   * Invalid TCP header length: %u bytes\n", size_tcp);
             return;
     }
     payload = (u_char*)(bytes + 14 + size_ip + size_tcp);
     qDebug() << "Successfull packet handling";
-    char dstAddr[INET_ADDRSTRLEN];
-    char sndAddr[INET_ADDRSTRLEN];
-    inet_ntop(AF_INET, &(ip->ip_dst.s_addr), dstAddr, INET_ADDRSTRLEN);
-    inet_ntop(AF_INET, &(ip->ip_dst.s_addr), sndAddr, INET_ADDRSTRLEN);
-    qDebug() << sndAddr << "\t" << dstAddr;
+
+    std::cout << "--------ETHERNET:--------\n";
+    std::cout << "ether_type: " << ethernet->ether_type << "\n";
+    std::cout << Headers::Header_ethernet::getMac(ethernet->ether_dhost) << "\t"
+              << Headers::Header_ethernet::getMac(ethernet->ether_shost) << "\n";
+    std::cout << "--------IP:--------------\n";
+    std::cout << "ip_v: " << Headers::Header_ip::getVersion(ip) << "\t\t"
+              << "ip_hl: " << Headers::Header_ip::getHeaderLength(ip) << "\n";
+    std::cout << Headers::Header_ip::getAddress(ip->ip_dst) << "\t\t"
+              <<  Headers::Header_ip::getAddress(ip->ip_src) << "\n";
 }
 
 void Sniffer::stopLoopingCapture(){

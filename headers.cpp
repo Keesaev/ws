@@ -4,14 +4,45 @@ Headers::Headers(QObject *parent) : QObject(parent)
 {
 
 }
-u_int Headers::th_off(const Header_tcp *tcp){
-    return (((tcp)->th_offx2 & 0xf0) >> 4);
+
+std::string Headers::byteToHexString(u_char a){
+    int b = a / 16;
+    int c = a % 16;
+
+    return (getSingleHexRegister(b) + getSingleHexRegister(c));
 }
 
-u_int Headers::ip_hl(const Header_ip *ip){
-    return (((ip)->ip_vhl) & 0x0f);
-}
+std::string Headers::getSingleHexRegister(int b){
+    std::string res = "";
+        if(b > 9){
+            switch (b)
+            {
+            case 10:
+            res = "A";
+                break;
+            case 11:
+            res = "B";
+                break;
+            case 12:
+            res = "C";
+                break;
+            case 13:
+            res = "D";
+                break;
+            case 14:
+            res = "E";
+                break;
+            case 15:
+            res = "F";
+                break;
 
-u_int Headers::ip_v(const Header_ip *ip){
-    return (((ip)->ip_vhl) >> 4);
+            default:
+            res = "0";
+                break;
+            }
+        }
+        else{
+            res = ('0' + b);
+        }
+        return res;
 }
