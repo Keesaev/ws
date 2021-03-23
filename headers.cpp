@@ -5,7 +5,7 @@ Headers::Headers(QObject *parent) : QObject(parent)
 
 }
 
-std::string Headers::byteToHexString(u_char a){
+std::string Headers::byteToHexString(unsigned char a){
     int b = a / 16;
     int c = a % 16;
 
@@ -18,22 +18,22 @@ std::string Headers::getSingleHexRegister(int b){
             switch (b)
             {
             case 10:
-            res = "A";
+            res = "a";
                 break;
             case 11:
-            res = "B";
+            res = "b";
                 break;
             case 12:
-            res = "C";
+            res = "c";
                 break;
             case 13:
-            res = "D";
+            res = "d";
                 break;
             case 14:
-            res = "E";
+            res = "e";
                 break;
             case 15:
-            res = "F";
+            res = "f";
                 break;
 
             default:

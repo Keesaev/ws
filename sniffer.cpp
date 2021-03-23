@@ -72,10 +72,10 @@ void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
     const struct Headers::Header_ethernet *ethernet;
     const struct Headers::Header_ip *ip;
     const struct Headers::Header_tcp *tcp;
-    u_char *payload;
+    unsigned char *payload;
 
-    u_int size_ip;
-    u_int size_tcp;
+    unsigned int size_ip;
+    unsigned int size_tcp;
 
     ethernet = (struct Headers::Header_ethernet*)(bytes);
     ip = (struct Headers::Header_ip*)(bytes + 14);
@@ -90,18 +90,26 @@ void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
         printf("   * Invalid TCP header length: %u bytes\n", size_tcp);
             return;
     }
-    payload = (u_char*)(bytes + 14 + size_ip + size_tcp);
+    payload = (unsigned char*)(bytes + 14 + size_ip + size_tcp);
     qDebug() << "Successfull packet handling";
 
     std::cout << "--------ETHERNET:--------\n";
     std::cout << "ether_type: " << ethernet->ether_type << "\n";
-    std::cout << Headers::Header_ethernet::getMac(ethernet->ether_dhost) << "\t"
-              << Headers::Header_ethernet::getMac(ethernet->ether_shost) << "\n";
+    std::cout << Headers::Header_ethernet::getMac(ethernet->ether_shost) << "\t"
+              << Headers::Header_ethernet::getMac(ethernet->ether_dhost) << "\n";
     std::cout << "--------IP:--------------\n";
     std::cout << "ip_v: " << Headers::Header_ip::getVersion(ip) << "\t\t"
               << "ip_hl: " << Headers::Header_ip::getHeaderLength(ip) << "\n";
-    std::cout << Headers::Header_ip::getAddress(ip->ip_dst) << "\t\t"
-              <<  Headers::Header_ip::getAddress(ip->ip_src) << "\n";
+    std::cout << "ip_tos: " << Headers::Header_ip::getPriority(ip) << "\t\t"
+              << "DTR bits: " << Headers::Header_ip::getDTR(ip) << "\n"
+              << "ip-len: " << ntohs(ip->ip_len) << "\t\t"
+              << "ip_id: "  << ntohs(ip->ip_id) << "\n"
+              << "ip_off: " << static_cast<int>(ip->ip_off) << "\t\t"
+              << "ip_ttl: " << static_cast<int>(ip->ip_ttl) << "\n"
+              << "ip_p: "   << static_cast<int>(ip->ip_p) << "\t\t"
+              << "ip_sum: " << ntohs(ip->ip_sum) << "\n";
+    std::cout << Headers::Header_ip::getAddress(ip->ip_src) << "\t\t"
+              <<  Headers::Header_ip::getAddress(ip->ip_dst) << "\n";
 }
 
 void Sniffer::stopLoopingCapture(){
