@@ -72,6 +72,7 @@ void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
     const struct Headers::Header_ethernet *ethernet;
     const struct Headers::Header_ip *ip;
     const struct Headers::Header_tcp *tcp;
+    const struct Headers::Header_udp *udp;
     unsigned char *payload;
 
     unsigned int size_ip;
@@ -80,10 +81,24 @@ void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
     ethernet = (struct Headers::Header_ethernet*)(bytes);
     ip = (struct Headers::Header_ip*)(bytes + 14);
     size_ip = Headers::Header_ip::getHeaderLength(ip)*4;
+
     if(size_ip < 20){
         printf("   * Invalid IP header length: %u bytes\n", size_ip);
             return;
     }
+
+    switch (ip->ip_p) {
+    case 6:
+        std::cout << "TCP\n";
+        break;
+    case 17:
+        std::cout << "UDP\n";
+        return;
+    default:
+        std::cout << "Protocol type unknown\n";
+        return;
+    }
+
     tcp = (struct Headers::Header_tcp*)(bytes + 14 + size_ip);
     size_tcp = Headers::Header_tcp::getOffset(tcp)*4;
     if(size_tcp < 20){
@@ -91,7 +106,6 @@ void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
             return;
     }
     payload = (unsigned char*)(bytes + 14 + size_ip + size_tcp);
-    qDebug() << "Successfull packet handling";
 
     std::cout << "--------ETHERNET:--------\n";
     std::cout << "ether_type: " << ethernet->ether_type << "\n";

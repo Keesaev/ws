@@ -8,22 +8,23 @@ class Headers : public QObject
 {
     Q_OBJECT
 public:
+
+    typedef unsigned char bit8;
+    typedef unsigned short bit16;
+
     explicit Headers(QObject *parent = nullptr);
 
     struct Header_ethernet // Длина всегда 14
     {
-        // 6 байт
-        unsigned char ether_dhost[6];  // Мак-адрес получателя
-        // 6 байт
-        unsigned char ether_shost[6];  // Мак-адрес отправителя
-        // 2 байта
-        unsigned short ether_type;     // Тип протокола уровня выше (0800 = ip)
+        bit8 ether_dhost[6];  // 48 bits: Мак-адрес получателя
+        bit8 ether_shost[6];  // 48 bits: Мак-адрес отправителя
+        bit8 ether_type;     // 16 bits: Тип протокола уровня выше (8 = ip)
 
         /* Тут инкапсулированный пакет */
 
         // 4 байта Контрольная сумма
 
-        static std::string getMac(const unsigned char addr[]){
+        static std::string getMac(const bit8 addr[]){
             std::string s = "";
             for(int i = 0; i < 6; i++){
                 s += Headers::byteToHexString(addr[i]) + ":";
@@ -33,26 +34,15 @@ public:
         }
     };
     struct Header_ip{
-        // 1 байт
-        // 4 бита версия и еще 4 бита длина интернет-заголовка
-        unsigned char ip_vhl;  // Version + Header Length
-        // 1 байт
-        unsigned char ip_tos;  // Type of service (тип обслуживания)
-        // 2 байта
-        unsigned short ip_len; // Длина пакета
-        // 2 байта
-        unsigned short ip_id;  // Идентификатор пакета
-        // 2 байта
-        // 3 бита флаги (не смотрим)
-        unsigned short ip_off; // 13 бит - смещение фрагмента
-        // 1 байт
-        unsigned char ip_ttl;  // Time to live (число хопов)
-        // 1 байт
-        unsigned char ip_p;    // Тип протокола (TCP, UDP, ICMP)
-        // 2 байта
-        unsigned short ip_sum; // Контрольная сумма
-        // по 4 байта адреса источника и назначения
-        struct in_addr ip_src, ip_dst;
+        bit8 ip_vhl;  // 8 bits:   Version (4 bits) + Header Length (4 bits)
+        bit8 ip_tos;  // 8 bits:   Type of service (тип обслуживания)
+        bit16 ip_len; // 16 bits:   Длина пакета
+        bit16 ip_id;  // 16 bits:   Идентификатор пакета
+        bit16 ip_off; // 16 bits:    Flags (3 bits) + смещение фрагмента (13 bits)
+        bit8 ip_ttl;  // 8 bits:     Time to live (число хопов)
+        bit8 ip_p;    // 8 bits:   Тип протокола (TCP, UDP, ICMP)
+        bit16 ip_sum; // 16 bits:  Контрольная сумма
+        struct in_addr ip_src, ip_dst; // 32 bits each
         // Далее рандомное число байт для флагов
 
         static std::string getAddress(in_addr addr){
@@ -90,30 +80,27 @@ public:
     typedef unsigned int tcp_seq;
 
     struct Header_tcp{
-        // 2 байта
-        unsigned short th_sport;   // Порт отправителя
-        // 2 байта
-        unsigned short th_dport;   // Порт получателя
-        // 4 байта
-        tcp_seq th_seq;     // Sequence number (порядковый номер)
-        // 4 байта
-        tcp_seq th_ack;     // Acknowledgment number (номер подтверждения)
-        // 1 байт
-        unsigned char th_offx2;    // 4 бита Data offset (длина заголовка) от [20 до 60 байт]
+        unsigned short th_sport;   // 16 bits:  Порт отправителя
+        unsigned short th_dport;   // 16 bits: Порт получателя
+        tcp_seq th_seq;            // 32 bits: Sequence number (порядковый номер)
+        tcp_seq th_ack;            // 32 bits: Acknowledgment number (номер подтверждения)
+        unsigned char th_offx2;    // 8 bits: 4 бита Data offset (длина заголовка) от [20 до 60 байт]
         // и 4 бита хз чего
-
-        // 1 байт
-        unsigned char th_flags;    // Флаги
-        // 2 байта
-        unsigned short th_win;     // Размер окна
-        // 2 байта
-        unsigned short th_sum;     // Контрольная сумма
-        // 2 байта
-        unsigned short th_urp;     // Urgent point (указатель важности)
+        unsigned char th_flags;    // 8 bits: Флаги
+        unsigned short th_win;     // 16 bits: Размер окна
+        unsigned short th_sum;     // 16 bits: Контрольная сумма
+        unsigned short th_urp;     // 16 bits: Urgent point (указатель важности)
 
         static int getOffset(const Header_tcp *tcp){
             return (((tcp)->th_offx2 & 0xf0) >> 4);
         }
+    };
+
+    struct Header_udp{
+        bit16 udp_sport;        // 16 bits: Source port
+        bit16 udp_dport;        // 16 bits: Destination port
+        bit16 udp_len;          // 16 bits: Длина сообщения
+        bit16 udp_chksum;       // 16 bits: Контрольная сумма
     };
 
     static std::string byteToHexString(unsigned char a);
