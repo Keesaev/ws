@@ -35,7 +35,7 @@ void Sniffer::setDev(char *d){
 
 // Инициализация pcap
 bool Sniffer::initPcap(){
-    if(m_dev == NULL || m_dev[0] == '/0')
+    if(m_dev == NULL)
         return false;
     char errbuf[PCAP_ERRBUF_SIZE];
     m_handle = pcap_create(m_dev, errbuf);
@@ -69,15 +69,16 @@ void Sniffer::startLoopingCapture(){
 
 void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
                            const u_char *bytes){
-    const struct Headers::Header_ethernet *ethernet;
-    const struct Headers::Header_ip *ip;
-    const struct Headers::Header_tcp *tcp;
-    const struct Headers::Header_udp *udp;
+    Headers::Header_ethernet *ethernet;
+    Headers::Header_ip *ip;
+    Headers::Header_tcp *tcp;
+    Headers::Header_udp *udp;
     unsigned char *payload;
 
     unsigned int size_ip;
     unsigned int size_tcp;
 
+    // const_cast<Headers::Header_ethernet>(reinterpret_cast<const Headers::Header_ethernet*>(bytes))
     ethernet = (struct Headers::Header_ethernet*)(bytes);
     ip = (struct Headers::Header_ip*)(bytes + 14);
     size_ip = Headers::Header_ip::getHeaderLength(ip)*4;
@@ -89,6 +90,7 @@ void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
 
     switch (ip->ip_p) {
     case 6:
+        tcp = (struct Headers::Header_tcp*)(bytes + 14 + size_ip);
         std::cout << "TCP\n";
         break;
     case 17:
@@ -99,7 +101,6 @@ void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
         return;
     }
 
-    tcp = (struct Headers::Header_tcp*)(bytes + 14 + size_ip);
     size_tcp = Headers::Header_tcp::getOffset(tcp)*4;
     if(size_tcp < 20){
         printf("   * Invalid TCP header length: %u bytes\n", size_tcp);

@@ -1,3 +1,7 @@
+Что-то придумать с распаковкой пакета и полиморфизмом:
+    - Переделать под потоки, а структуры заменить на классы
+    - Создать класс, в нем экземпляр структуры и перегруженный метод вывода
+
 - Добавить формат заголовка
     - UDP
     - ICMP
@@ -8,3 +12,25 @@
     - UDP
 - Завершение захвата из другого потока
 - Сохранение в файл
+
+
+/*
+
+class Transport{
+    private Headers::Header_transport *transport;
+
+    public void setPacket(char *bytes, int protocol){
+        switch (protocol)
+        {
+            case x:
+                transport = reinterpret_cast<Headers::Header_tcp>(bytes);
+            case y:
+                ...
+        }
+    public string getData(){
+        ..
+    }
+    }
+}
+
+*/
