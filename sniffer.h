@@ -3,13 +3,12 @@
 
 #include <QObject>
 #include <pcap/pcap.h>
-#include <QDebug>
-#include <vector>
-#include "headers.h"
 #include <sstream>
 #include <iostream>
-#include <iomanip>
-#include <stdlib.h>
+
+#include <datalink.h>
+#include <network.h>
+#include <transport.h>
 
 class Sniffer : public QObject
 {

@@ -1,18 +1,36 @@
-#include "headers.h"
+#include "datalink.h"
 
-Headers::Headers(QObject *parent) : QObject(parent)
+DataLink::DataLink(QObject *parent) : QObject(parent)
 {
 
 }
 
-std::string Headers::byteToHexString(unsigned char a){
+void DataLink::fillHeader(EthernetHeader *header, const u_char *bytes){
+    std::string str(reinterpret_cast<const char*>(bytes), 14);
+    std::stringstream stream(str);
+
+    for(int i = 0; i < 6; i++){
+        stream >> header->ether_dhost[i];
+    }
+
+    for(int i = 0; i < 6; i++){
+        stream >> header->ether_shost[i];
+    }
+    stream >> header->ether_type;
+
+    std::cout << DataLink::getMac(header->ether_dhost) << "\n";
+    std::cout << DataLink::getMac(header->ether_shost) << "\n";
+    std::cout << header->ether_type << "\n";
+}
+
+std::string DataLink::byteToHexString(unsigned char a){
     int b = a / 16;
     int c = a % 16;
 
     return (getSingleHexRegister(b) + getSingleHexRegister(c));
 }
 
-std::string Headers::getSingleHexRegister(int b){
+std::string DataLink::getSingleHexRegister(int b){
     std::string res = "";
         if(b > 9){
             switch (b)

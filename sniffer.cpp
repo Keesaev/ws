@@ -16,7 +16,7 @@ bool Sniffer::getDevs(std::vector<std::pair<char*, char*>> &d){
     int retVal = pcap_findalldevs(&alldevsp, errbuf);
 
     if(retVal == PCAP_ERROR){
-        qDebug() << errbuf << "\n";
+        std::cout << errbuf << "\n";
         return false;
     }
     else{
@@ -40,7 +40,7 @@ bool Sniffer::initPcap(){
     char errbuf[PCAP_ERRBUF_SIZE];
     m_handle = pcap_create(m_dev, errbuf);
     if(m_handle == NULL){
-        qDebug() << errbuf;
+        std::cout << errbuf;
         return false;
     }
     else
@@ -69,14 +69,17 @@ void Sniffer::startLoopingCapture(){
 
 void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
                            const u_char *bytes){
-    Headers::Header_ethernet *ethernet;
-    Headers::Header_ip *ip;
-    Headers::Header_tcp *tcp;
-    Headers::Header_udp *udp;
+    DataLink::EthernetHeader *ethernet = new DataLink::EthernetHeader();
+    Network::IpHeader *ip;
+    Transport::TcpHeader *tcp; //
     unsigned char *payload;
 
     unsigned int size_ip;
     unsigned int size_tcp;
+
+    DataLink::fillHeader(ethernet, bytes);
+
+    /*
 
     // const_cast<Headers::Header_ethernet>(reinterpret_cast<const Headers::Header_ethernet*>(bytes))
     ethernet = (struct Headers::Header_ethernet*)(bytes);
@@ -106,6 +109,10 @@ void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
         printf("   * Invalid TCP header length: %u bytes\n", size_tcp);
             return;
     }
+    */
+
+
+    /*
     payload = (unsigned char*)(bytes + 14 + size_ip + size_tcp);
 
     std::cout << "--------ETHERNET:--------\n";
@@ -125,6 +132,7 @@ void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
               << "ip_sum: " << ntohs(ip->ip_sum) << "\n";
     std::cout << Headers::Header_ip::getAddress(ip->ip_src) << "\t\t"
               <<  Headers::Header_ip::getAddress(ip->ip_dst) << "\n";
+    */
 }
 
 void Sniffer::stopLoopingCapture(){
@@ -137,11 +145,11 @@ void Sniffer::captureSinglePacket(){
     const u_char *pkt_data;
     int retVal = pcap_next_ex(m_handle, &header, &pkt_data);
     if(retVal == 1){
-        qDebug() << "len: " << header->len;
-        qDebug() << pkt_data;
+        std::cout << "len: " << header->len;
+        std::cout << pkt_data;
     }
     else
-        qDebug() << retVal;
+        std::cout << retVal;
 }
 
 void Sniffer::stopCapture(){

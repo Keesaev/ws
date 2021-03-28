@@ -3,34 +3,69 @@
     - Создать класс, в нем экземпляр структуры и перегруженный метод вывода
 
 - Добавить формат заголовка
-    - UDP
-    - ICMP
-- Вывод всех полей заголовков в принтабельном формате:
     + Ethernet
-    + IP
+        + IP
+            + TCP
+            + UDP
+            + ICMP
+- Вывод всех полей заголовков в принтабельном формате:
+    - Ethernet
+    - IP
     - TCP
     - UDP
+    - ICMP
 - Завершение захвата из другого потока
 - Сохранение в файл
 
-
-/*
-
-class Transport{
-    private Headers::Header_transport *transport;
-
-    public void setPacket(char *bytes, int protocol){
-        switch (protocol)
-        {
-            case x:
-                transport = reinterpret_cast<Headers::Header_tcp>(bytes);
-            case y:
-                ...
-        }
-    public string getData(){
-        ..
+class Network{
+    struct IpHeader{
+        ...
     }
+    // true если длина заголовка подходит требованиям
+    public bool fillHeader(char *bytes, IpHeader *header){
+        stringstream...
     }
 }
 
-*/
+class DataLink{
+    struct EthernetHeader{
+        ...
+    }
+    public void fillHeader(char *bytes, EthernetHeader *header)
+    {
+        stringstream ...
+    }
+}
+
+class Transport{
+
+    struct BaseTransportHeader{
+        ...
+    }
+
+    struct TcpHeader : BaseTransportHeader{
+        ...
+    }
+
+    struct UdpHeader : BaseTransportHeader{
+        ...
+    }
+
+    struct IcmpHeader : BaseTransportHeader{
+        ...
+    }
+
+    public void fillPacket(char *bytes, int protocol){
+        switch (protocol)
+        {
+            case x:
+                transportHeader = (TcpHeader*)(bytes);
+            case y:
+                ...
+        }
+    }
+
+
+}
+
+
