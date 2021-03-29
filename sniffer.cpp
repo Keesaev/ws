@@ -70,7 +70,7 @@ void Sniffer::startLoopingCapture(){
 void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
                            const u_char *bytes){
     DataLink::EthernetHeader *ethernet = new DataLink::EthernetHeader();
-    Network::IpHeader *ip;
+    Network::IpHeader *ip = new Network::IpHeader();
     Transport::TcpHeader *tcp; //
     unsigned char *payload;
 
@@ -78,6 +78,7 @@ void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
     unsigned int size_tcp;
 
     DataLink::fillHeader(ethernet, bytes);
+    Network::fillHeader(ip, bytes);
 
     /*
 

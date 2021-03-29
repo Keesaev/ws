@@ -3,6 +3,14 @@
 
 #include <QObject>
 #include <pcap/pcap.h>
+#include <sstream>
+#include <istream>
+#include <string>
+#include <algorithm>
+
+#include <iostream>
+
+using namespace std;
 
 class Network : public QObject
 {
@@ -58,6 +66,12 @@ public:
     }
 
     static bool fillHeader(IpHeader *header, const unsigned char* bytes);
+
+    friend std::istream& operator>> (std::istream &stream, bit16 &data){
+        stream.read(reinterpret_cast<char*>(&data), sizeof(bit16));
+        return stream;
+    }
+private:
 
 signals:
 

@@ -9,6 +9,7 @@ void DataLink::fillHeader(EthernetHeader *header, const u_char *bytes){
     std::string str(reinterpret_cast<const char*>(bytes), 14);
     std::stringstream stream(str);
 
+    // >> Можно использовать для 1 байта, но не для 2 байт
     for(int i = 0; i < 6; i++){
         stream >> header->ether_dhost[i];
     }
@@ -16,7 +17,8 @@ void DataLink::fillHeader(EthernetHeader *header, const u_char *bytes){
     for(int i = 0; i < 6; i++){
         stream >> header->ether_shost[i];
     }
-    stream >> header->ether_type;
+    // Перегрузить оператор >> для 16бит
+    stream.read(reinterpret_cast<char*>(&header->ether_type), sizeof(bit16));
 
     std::cout << DataLink::getMac(header->ether_dhost) << "\n";
     std::cout << DataLink::getMac(header->ether_shost) << "\n";
