@@ -17,7 +17,6 @@ void DataLink::fillHeader(EthernetHeader *header, const u_char *bytes){
     for(int i = 0; i < 6; i++){
         stream >> header->ether_shost[i];
     }
-    // Перегрузить оператор >> для 16бит
     stream.read(reinterpret_cast<char*>(&header->ether_type), sizeof(bit16));
 
     std::cout << DataLink::getMac(header->ether_dhost) << "\n";

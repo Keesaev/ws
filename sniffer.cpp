@@ -71,21 +71,25 @@ void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
                            const u_char *bytes){
     DataLink::EthernetHeader *ethernet = new DataLink::EthernetHeader();
     Network::IpHeader *ip = new Network::IpHeader();
-    Transport::TcpHeader *tcp; //
+    Transport::BaseTransportHeader *transport;
     unsigned char *payload;
 
     unsigned int size_ip;
     unsigned int size_tcp;
 
     DataLink::fillHeader(ethernet, bytes);
-    Network::fillHeader(ip, bytes);
+    if(!Network::fillHeader(ip, bytes))
+        return;
+
+    size_ip = Network::getHeaderLength(ip)*4;
+    Transport::fillHeader(bytes, transport, ip->ip_p, 14 + size_ip);
 
     /*
 
     // const_cast<Headers::Header_ethernet>(reinterpret_cast<const Headers::Header_ethernet*>(bytes))
     ethernet = (struct Headers::Header_ethernet*)(bytes);
     ip = (struct Headers::Header_ip*)(bytes + 14);
-    size_ip = Headers::Header_ip::getHeaderLength(ip)*4;
+
 
     if(size_ip < 20){
         printf("   * Invalid IP header length: %u bytes\n", size_ip);
@@ -106,34 +110,7 @@ void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
     }
 
     size_tcp = Headers::Header_tcp::getOffset(tcp)*4;
-    if(size_tcp < 20){
-        printf("   * Invalid TCP header length: %u bytes\n", size_tcp);
-            return;
-    }
-    */
-
-
-    /*
-    payload = (unsigned char*)(bytes + 14 + size_ip + size_tcp);
-
-    std::cout << "--------ETHERNET:--------\n";
-    std::cout << "ether_type: " << ethernet->ether_type << "\n";
-    std::cout << Headers::Header_ethernet::getMac(ethernet->ether_shost) << "\t"
-              << Headers::Header_ethernet::getMac(ethernet->ether_dhost) << "\n";
-    std::cout << "--------IP:--------------\n";
-    std::cout << "ip_v: " << Headers::Header_ip::getVersion(ip) << "\t\t"
-              << "ip_hl: " << Headers::Header_ip::getHeaderLength(ip) << "\n";
-    std::cout << "ip_tos: " << Headers::Header_ip::getPriority(ip) << "\t\t"
-              << "DTR bits: " << Headers::Header_ip::getDTR(ip) << "\n"
-              << "ip-len: " << ntohs(ip->ip_len) << "\t\t"
-              << "ip_id: "  << ntohs(ip->ip_id) << "\n"
-              << "ip_off: " << static_cast<int>(ip->ip_off) << "\t\t"
-              << "ip_ttl: " << static_cast<int>(ip->ip_ttl) << "\n"
-              << "ip_p: "   << static_cast<int>(ip->ip_p) << "\t\t"
-              << "ip_sum: " << ntohs(ip->ip_sum) << "\n";
-    std::cout << Headers::Header_ip::getAddress(ip->ip_src) << "\t\t"
-              <<  Headers::Header_ip::getAddress(ip->ip_dst) << "\n";
-    */
+    if(size_tcp < 20){*/
 }
 
 void Sniffer::stopLoopingCapture(){

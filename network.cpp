@@ -27,11 +27,11 @@ bool Network::fillHeader(IpHeader *header, const u_char *bytes){
     else{
         std::cout << "ip_v: " << getVersion(header) << "\t\t"
                   << "ip_hl: " << getHeaderLength(header) << "\n";
-        std::cout << "ip_tos: " << getPriority(header) << "\t\t"
-                  << "DTR bits: " << getDTR(header) << "\n"
+        std::cout << "ip_tos: " << getTos(header) << "\t\t"
                   << "ip-len: " << ntohs(header->ip_len) << "\t\t"
                   << "ip_id: "  << ntohs(header->ip_id) << "\n"
-                  << "ip_off: " << static_cast<int>(header->ip_off) << "\t\t"
+                  << "ip_flags: " << getFlags(header) << "\t\t"
+                  << "ip_off: " << getOffset(header) << "\t\t"
                   << "ip_ttl: " << static_cast<int>(header->ip_ttl) << "\n"
                   << "ip_p: "   << static_cast<int>(header->ip_p) << "\t\t"
                   << "ip_sum: " << ntohs(header->ip_sum) << "\n";

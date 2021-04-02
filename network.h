@@ -21,6 +21,8 @@ public:
     typedef unsigned char bit8;
     typedef unsigned short bit16;
 
+    // https://en.wikipedia.org/wiki/IPv4#Header
+
     struct IpHeader{
         bit8 ip_vhl;  // 8 bits:   Version (4 bits) + Header Length (4 bits)
         bit8 ip_tos;  // 8 bits:   Type of service (тип обслуживания)
@@ -50,13 +52,15 @@ public:
         return (((ip)->ip_vhl) >> 4);
     }
 
+    // Первые
     static int getPriority(const IpHeader *ip){
         return (((ip)->ip_tos) >> 5);
     }
 
-    static std::string getDTR(const IpHeader *ip){
+    // 3 бита ToS
+    static std::string getTos(const IpHeader *ip){
         std::string s = "";
-        for(int i = 16; i >= 4; i /= 2){
+        for(int i = 128; i >= 1; i /= 2){
             if(((ip)->ip_tos) & i)
                 s += "1";
             else
@@ -65,8 +69,26 @@ public:
         return s;
     }
 
-    static bool fillHeader(IpHeader *header, const unsigned char* bytes);
+    // Берем 2 байта без левых 3 битов
+    static int getOffset(const IpHeader *ip){
+        return (ntohs(ip->ip_off) & 8191);
+    }
 
+    // 3 левых вита из поля off
+    static std::string getFlags(const IpHeader *ip){
+        std::string s = "";
+        for(int i = 32768; i >= 8192; i /= 2){
+            if(ntohs(ip->ip_off) & i)
+                s += "1";
+            else
+                s += "0";
+        }
+        return s;
+    }
+
+    static bool fillHeader(IpHeader *header, const u_char* bytes);
+
+    // Не работает хз почему
     friend std::istream& operator>> (std::istream &stream, bit16 &data){
         stream.read(reinterpret_cast<char*>(&data), sizeof(bit16));
         return stream;
