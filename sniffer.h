@@ -8,7 +8,10 @@
 
 #include <datalink.h>
 #include <network.h>
-#include <transport.h>
+#include <stuboutput.h>
+#include <basetransport.h>
+#include <emptytransport.h>
+#include <factory.h>
 
 class Sniffer : public QObject
 {

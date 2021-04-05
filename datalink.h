@@ -6,14 +6,24 @@
 #include <pcap/pcap.h>
 #include <sstream>
 
+#include <vector>
+#include <string>
+
 // Временные инклюды
 #include <iostream>
+
+using namespace std;
 
 class DataLink : public QObject
 {
     Q_OBJECT
 public:
     explicit DataLink(QObject *parent = nullptr);
+
+    void deserializeHeader(const u_char *bytes);
+    vector<string> getHeaderData();
+
+private:
 
     typedef unsigned char bit8;
     typedef unsigned short bit16;
@@ -29,6 +39,8 @@ public:
         // 4 байта Контрольная сумма
     };
 
+    EthernetHeader ethernetHeader;
+
     static std::string getMac(const bit8 addr[]){
         std::string s = "";
         for(int i = 0; i < 6; i++){
@@ -37,12 +49,7 @@ public:
         s[s.length() - 1] = ' ';
         return s;
     }
-
-    static void fillHeader(EthernetHeader *header, const u_char* bytes);
-
     static std::string byteToHexString(unsigned char a);
-
-private:
     static std::string getSingleHexRegister(int b);
 signals:
 

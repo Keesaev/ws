@@ -15,12 +15,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+        basetransport.cpp \
         datalink.cpp \
+        emptytransport.cpp \
+        factory.cpp \
+        icmp.cpp \
         main.cpp \
         network.cpp \
         sniffer.cpp \
         stuboutput.cpp \
-        transport.cpp
+        tcp.cpp \
+        udp.cpp
 
 LIBS += -lpcap
 
@@ -30,11 +35,16 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    basetransport.h \
     datalink.h \
+    emptytransport.h \
+    factory.h \
+    icmp.h \
     network.h \
     sniffer.h \
     stuboutput.h \
-    transport.h
+    tcp.h \
+    udp.h
 
 DISTFILES += \
     TODO

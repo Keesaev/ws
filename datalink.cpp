@@ -5,23 +5,26 @@ DataLink::DataLink(QObject *parent) : QObject(parent)
 
 }
 
-void DataLink::fillHeader(EthernetHeader *header, const u_char *bytes){
+void DataLink::deserializeHeader(const u_char *bytes){
     std::string str(reinterpret_cast<const char*>(bytes), 14);
     std::stringstream stream(str);
 
     // >> Можно использовать для 1 байта, но не для 2 байт
     for(int i = 0; i < 6; i++){
-        stream >> header->ether_dhost[i];
+        stream >> ethernetHeader.ether_dhost[i];
     }
 
     for(int i = 0; i < 6; i++){
-        stream >> header->ether_shost[i];
+        stream >> ethernetHeader.ether_shost[i];
     }
-    stream.read(reinterpret_cast<char*>(&header->ether_type), sizeof(bit16));
+    stream.read(reinterpret_cast<char*>(&ethernetHeader.ether_type), sizeof(bit16));
+}
 
-    std::cout << DataLink::getMac(header->ether_dhost) << "\n";
-    std::cout << DataLink::getMac(header->ether_shost) << "\n";
-    std::cout << header->ether_type << "\n";
+// TODO
+vector<string> DataLink::getHeaderData(){
+    vector<string> v;
+    v.push_back("Some data to be added");
+    return v;
 }
 
 std::string DataLink::byteToHexString(unsigned char a){

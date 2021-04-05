@@ -1,7 +1,3 @@
-Что-то придумать с распаковкой пакета и полиморфизмом:
-    - Переделать под потоки, а структуры заменить на классы
-    - Создать класс, в нем экземпляр структуры и перегруженный метод вывода
-
 - Добавить формат заголовка
     + Ethernet
         + IP
@@ -17,55 +13,93 @@
 - Завершение захвата из другого потока
 - Сохранение в файл
 
-class Network{
-    struct IpHeader{
-        ...
+class BaseTransport{
+    virtual void deserializeHeader(const u_char *bytes, int offset){
     }
-    // true если длина заголовка подходит требованиям
-    public bool fillHeader(char *bytes, IpHeader *header){
-        stringstream...
+
+    virtual bool isHeaderEmpty(){
+    }
+
+    virtual List<string> getHeaderData(){
     }
 }
 
-class DataLink{
-    struct EthernetHeader{
-        ...
+class Tcp : BaseTransport{
+private:
+    struct TcpHeader{
+        // fields
     }
-    public void fillHeader(char *bytes, EthernetHeader *header)
-    {
-        stringstream ...
+    TcpHeader tcpHeader;
+public:
+    void deserializeHeader(const u_char *bytes, int offset) override {
+        // Заполняем переменную tcpHeader
+    }
+
+    bool isHeaderEmpty() override {
+        if(tcpHeader.tcp_len < 20)
+            return true;
+        else
+            return false;
+    }
+
+    List<string> getHeaderData() override {
+        // Составляем List<string> из полей переменной tcpHeader
     }
 }
 
-class Transport{
-
-    struct BaseTransportHeader{
-        ...
+// Если заголовок поврежден / не получилось захватить часть / неизвестен
+class EmptyTransport : BaseTransport{
+public:
+    void deserializeHeader(const u_char *bytes, int offset) override {
+        // Ничего не делаем
     }
 
-    struct TcpHeader : BaseTransportHeader{
-        ...
+    bool isHeaderEmpty() override {
+        return false;
     }
 
-    struct UdpHeader : BaseTransportHeader{
-        ...
+    List<string> getHeaderData() override{
+        List<string> s;
+        s.push_back("No data available");
+        return s;
     }
+}
 
-    struct IcmpHeader : BaseTransportHeader{
-        ...
-    }
-
-    public void fillPacket(char *bytes, int protocol){
-        switch (protocol)
-        {
-            case x:
-                transportHeader = (TcpHeader*)(bytes);
-            case y:
-                ...
+class Factory{
+    static BaseTransport* makeTransport(int protocol){
+        BaseTransport *transport;
+        switch (protocol){
+            case 1:
+                transport = new Tcp();
+                break;
+            case 2:
+                transport = new Udp();
+                break;
+            case 3:
+                transport = new Icmp();
+                break;
+            default:
+                transport = new EmptyTransport();
+                break;
         }
+        return transport;
     }
-
-
 }
+
+    // какой-то главный метод:
+    BaseTransport *transport = Factory::setTransport(protocol);
+    transport.deserializeHeader(bytes, offset);
+    if(transport.isHeaderEmpty())
+    {
+        delete transport;
+        transport = new EmptyTransport();
+    }
+    List<string> s = transport.getHeaderData();
+    // Вывод
+
+
+
+
+
 
 

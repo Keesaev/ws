@@ -6,7 +6,7 @@
 #include <sstream>
 #include <istream>
 #include <string>
-#include <algorithm>
+#include <vector>
 
 #include <iostream>
 
@@ -15,8 +15,9 @@ using namespace std;
 class Network : public QObject
 {
     Q_OBJECT
-public:
-    explicit Network(QObject *parent = nullptr);
+
+// ВРЕМЕННО
+private:
 
     typedef unsigned char bit8;
     typedef unsigned short bit16;
@@ -36,32 +37,28 @@ public:
         // Далее рандомное число байт для флагов
     };
 
-    static std::string getAddress(in_addr addr){
+    IpHeader ipHeader;
+
+    std::string getAddress(in_addr addr){
         char cAddr[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &(addr), cAddr, INET_ADDRSTRLEN);
         return cAddr;
     }
 
-    // Читаем левые 4 бита поля ip_vhl
-    static int getHeaderLength(const IpHeader *ip){
-        return (((ip)->ip_vhl) & 0x0f);
-    }
-
     // Читаем правые 4 бита поля ip_vhl
-    static int getVersion(const IpHeader *ip){
-        return (((ip)->ip_vhl) >> 4);
+    int getVersion(){
+        return ((ipHeader.ip_vhl) >> 4);
     }
 
-    // Первые
-    static int getPriority(const IpHeader *ip){
-        return (((ip)->ip_tos) >> 5);
+    int getPriority(){
+        return ((ipHeader.ip_tos) >> 5);
     }
 
     // 3 бита ToS
-    static std::string getTos(const IpHeader *ip){
+    std::string getTos(){
         std::string s = "";
         for(int i = 128; i >= 1; i /= 2){
-            if(((ip)->ip_tos) & i)
+            if((ipHeader.ip_tos) & i)
                 s += "1";
             else
                 s += "0";
@@ -70,15 +67,15 @@ public:
     }
 
     // Берем 2 байта без левых 3 битов
-    static int getOffset(const IpHeader *ip){
-        return (ntohs(ip->ip_off) & 8191);
+    int getOffset(){
+        return (ntohs(ipHeader.ip_off) & 8191);
     }
 
     // 3 левых вита из поля off
-    static std::string getFlags(const IpHeader *ip){
+    std::string getFlags(){
         std::string s = "";
         for(int i = 32768; i >= 8192; i /= 2){
-            if(ntohs(ip->ip_off) & i)
+            if(ntohs(ipHeader.ip_off) & i)
                 s += "1";
             else
                 s += "0";
@@ -86,14 +83,21 @@ public:
         return s;
     }
 
-    static bool fillHeader(IpHeader *header, const u_char* bytes);
+public:
+    explicit Network(QObject *parent = nullptr);
 
-    // Не работает хз почему
-    friend std::istream& operator>> (std::istream &stream, bit16 &data){
-        stream.read(reinterpret_cast<char*>(&data), sizeof(bit16));
-        return stream;
+    vector<string> getHeaderData();
+    void deserializeHeader(const u_char* bytes);
+    bool isHeaderEmpty();
+
+    // Читаем левые 4 бита поля ip_vhl
+    int getHeaderLength(){
+        return (((ipHeader).ip_vhl) & 0x0f);
     }
-private:
+
+    int getProtocol(){
+        return ipHeader.ip_p;
+    }
 
 signals:
 

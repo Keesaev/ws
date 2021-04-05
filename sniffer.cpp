@@ -69,48 +69,33 @@ void Sniffer::startLoopingCapture(){
 
 void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
                            const u_char *bytes){
-    DataLink::EthernetHeader *ethernet = new DataLink::EthernetHeader();
-    Network::IpHeader *ip = new Network::IpHeader();
-    Transport::BaseTransportHeader *transport;
+    DataLink *datalink = new DataLink();
+    Network *network = new Network();
+    BaseTransport *transport;
+
     unsigned char *payload;
+    const unsigned int size_datalink = 14;
+    unsigned int size_network;
+    unsigned int size_transport;
 
-    unsigned int size_ip;
-    unsigned int size_tcp;
-
-    DataLink::fillHeader(ethernet, bytes);
-    if(!Network::fillHeader(ip, bytes))
-        return;
-
-    size_ip = Network::getHeaderLength(ip)*4;
-    Transport::fillHeader(bytes, transport, ip->ip_p, 14 + size_ip);
-
-    /*
-
-    // const_cast<Headers::Header_ethernet>(reinterpret_cast<const Headers::Header_ethernet*>(bytes))
-    ethernet = (struct Headers::Header_ethernet*)(bytes);
-    ip = (struct Headers::Header_ip*)(bytes + 14);
-
-
-    if(size_ip < 20){
-        printf("   * Invalid IP header length: %u bytes\n", size_ip);
-            return;
-    }
-
-    switch (ip->ip_p) {
-    case 6:
-        tcp = (struct Headers::Header_tcp*)(bytes + 14 + size_ip);
-        std::cout << "TCP\n";
-        break;
-    case 17:
-        std::cout << "UDP\n";
-        return;
-    default:
-        std::cout << "Protocol type unknown\n";
+    datalink->deserializeHeader(bytes);
+    network->deserializeHeader(bytes);
+    if(network->isHeaderEmpty()){
+        delete datalink;
+        delete network;
         return;
     }
+    size_network = network->getHeaderLength() * 4;
+    // Тут проблема, скорее всего надо присмотреться к Factory или к наследованию
+    // Перечитать как делаются виртуальные функции
 
-    size_tcp = Headers::Header_tcp::getOffset(tcp)*4;
-    if(size_tcp < 20){*/
+    //transport = Factory::makeTransport(network->getProtocol());
+    //transport->deserializeHeader(bytes, size_datalink + size_network);
+    network->getHeaderData();
+
+    delete datalink;
+    delete network;
+    //delete transport;
 }
 
 void Sniffer::stopLoopingCapture(){
