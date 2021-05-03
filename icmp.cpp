@@ -6,9 +6,9 @@ Icmp::Icmp()
 }
 
 void Icmp::deserializeHeader(const u_char *bytes, int offset) {
-    std::string str(reinterpret_cast<const char*>(bytes), offset + icmpSize);
+    string str(reinterpret_cast<const char*>(bytes), offset + icmpSize);
     str = str.substr(offset, icmpSize);
-    std::stringstream stream(str);
+    stringstream stream(str);
 
     stream >> icmpHeader.icmp_type;
     stream >> icmpHeader.icmp_code;
@@ -23,11 +23,11 @@ bool Icmp::isHeaderEmpty() {
 
 vector<string> Icmp::getHeaderData() {
     //  TODO
-    std::cout << "ICMP HEADER:\n";
-    std::cout << "icmp_type: " << static_cast<int>(icmpHeader.icmp_type) << "\n";
-    std::cout << "icmp_code: " << static_cast<int>(icmpHeader.icmp_code) << "\n";
-    std::cout << "icmp_sum: " << ntohs(icmpHeader.icmp_sum) << "\n";
-    std::cout << "icmp_rest: " << ntohl(icmpHeader.icmp_rest) << "\n";
+    cout << "ICMP HEADER:\n";
+    cout << "icmp_type: " << static_cast<int>(icmpHeader.icmp_type) << "\n";
+    cout << "icmp_code: " << static_cast<int>(icmpHeader.icmp_code) << "\n";
+    cout << "icmp_sum: " << ntohs(icmpHeader.icmp_sum) << "\n";
+    cout << "icmp_rest: " << ntohl(icmpHeader.icmp_rest) << "\n";
 
     vector<string> v;
     return v;

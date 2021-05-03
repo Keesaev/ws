@@ -18,26 +18,29 @@ class Tcp : public BaseTransport
 
     typedef unsigned char bit8;
     typedef unsigned short bit16;
-    typedef unsigned int tcp_seq;
+    typedef unsigned int bit32;
+    const int tcpMaxHeaderSize = 60;
+    const int tcpMinHeaderSize = 20;
 
     struct TcpHeader{
         bit16 tcp_sport;   // 16 bits:  Порт отправителя
         bit16 tcp_dport;   // 16 bits: Порт получателя
-        tcp_seq tcp_seqn;  // 32 bits: Sequence number (порядковый номер)
-        tcp_seq tcp_ack;   // 32 bits: Acknowledgment number (номер подтверждения)
+        bit32 tcp_seqn;  // 32 bits: Sequence number (порядковый номер)
+        bit32 tcp_ack;   // 32 bits: Acknowledgment number (номер подтверждения)
         bit8 tcp_offx2;    // 8 bits: 4 бита Data offset (длина заголовка) от [20 до 60 байт]
         // и 4 бита хз чего
+        // TODO
         bit8 tcp_flags;    // 8 bits: Флаги
         bit16 tcp_win;     // 16 bits: Размер окна
         bit16 tcp_sum;     // 16 bits: Контрольная сумма
         bit16 tcp_urp;     // 16 bits: Urgent point (указатель важности)
-
-        static int getOffset(const TcpHeader *tcp){
-            return (((tcp)->tcp_offx2 & 0xf0) >> 4);
-        }
     };
 
     TcpHeader tcpHeader;
+
+    int getOffset(){
+        return ((tcpHeader.tcp_offx2 & 0xf0) >> 4);
+    }
 
 public:
     Tcp();

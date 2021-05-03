@@ -12,9 +12,7 @@ BaseTransport* Factory::makeTransport(int protocol){
         transport = new Icmp();
         break;
     case 6:
-        std::cout << "TCP HEADER:\n";
-        //transport = new Tcp();
-        transport = new EmptyTransport();
+        transport = new Tcp();
         break;
     case 17:
         transport = new Udp();
