@@ -23,6 +23,7 @@ bool Icmp::isHeaderEmpty() {
 
 vector<string> Icmp::getHeaderData() {
     //  TODO
+    std::cout << "ICMP HEADER:\n";
     std::cout << "icmp_type: " << static_cast<int>(icmpHeader.icmp_type) << "\n";
     std::cout << "icmp_code: " << static_cast<int>(icmpHeader.icmp_code) << "\n";
     std::cout << "icmp_sum: " << ntohs(icmpHeader.icmp_sum) << "\n";

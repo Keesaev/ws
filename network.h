@@ -21,8 +21,9 @@ private:
 
     typedef unsigned char bit8;
     typedef unsigned short bit16;
-    const int ipMaxSize = 60;
-    const int ipMinSize = 20;
+    const int ipMaxHeaderSize = 60;
+    const int ipMinHeaderSize = 20;
+    const int ethernetHeaderSize = 14;
 
     // https://en.wikipedia.org/wiki/IPv4#Header
 

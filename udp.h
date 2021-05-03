@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <pcap/pcap.h>
 
 #include <iostream>
 
@@ -16,6 +17,7 @@ class Udp : public BaseTransport
     Q_OBJECT
 
     typedef unsigned short bit16;
+    const int udpHeaderSize = 8;
 
     struct UdpHeader{
         bit16 udp_sport;        // 16 bits: Source port
