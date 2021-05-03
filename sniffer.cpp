@@ -64,7 +64,7 @@ bool Sniffer::initPcap(){
 }
 
 void Sniffer::startLoopingCapture(){
-    pcap_loop(m_handle, 10, handlePacket, NULL);
+    pcap_loop(m_handle, 100, handlePacket, NULL);
 }
 
 void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
@@ -86,16 +86,19 @@ void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
         return;
     }
     size_network = network->getHeaderLength() * 4;
+
     // Тут проблема, скорее всего надо присмотреться к Factory или к наследованию
     // Перечитать как делаются виртуальные функции
 
-    //transport = Factory::makeTransport(network->getProtocol());
-    //transport->deserializeHeader(bytes, size_datalink + size_network);
+    transport = Factory::makeTransport(network->getProtocol());
+    transport->deserializeHeader(bytes, size_datalink + size_network);
+
     network->getHeaderData();
+    transport->getHeaderData();
 
     delete datalink;
     delete network;
-    //delete transport;
+    delete transport;
 }
 
 void Sniffer::stopLoopingCapture(){

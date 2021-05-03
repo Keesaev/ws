@@ -21,6 +21,8 @@ private:
 
     typedef unsigned char bit8;
     typedef unsigned short bit16;
+    const int ipMaxSize = 60;
+    const int ipMinSize = 20;
 
     // https://en.wikipedia.org/wiki/IPv4#Header
 
@@ -73,6 +75,7 @@ private:
 
     // 3 левых вита из поля off
     std::string getFlags(){
+        // ТУТ ПИЗДА --------------------------------------------------------------------------
         std::string s = "";
         for(int i = 32768; i >= 8192; i /= 2){
             if(ntohs(ipHeader.ip_off) & i)
@@ -97,6 +100,10 @@ public:
 
     int getProtocol(){
         return ipHeader.ip_p;
+    }
+
+    int getTotalLength(){
+        return ipHeader.ip_len;
     }
 
 signals:

@@ -14,9 +14,9 @@ class EmptyTransport : public BaseTransport
 public:
     EmptyTransport();
 
-    void deserializeHeader(const u_char *bytes, int offset) override;
-    bool isHeaderEmpty() override;
-    vector<string> getHeaderData() override;
+    virtual void deserializeHeader(const u_char *bytes, int offset);
+    virtual bool isHeaderEmpty();
+    virtual vector<string> getHeaderData();
 };
 
 #endif // EMPTYTRANSPORT_H

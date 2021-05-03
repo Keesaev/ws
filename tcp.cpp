@@ -8,7 +8,7 @@ Tcp::Tcp()
 void Tcp::deserializeHeader(const u_char *bytes, int offset){
     // Длина заголовка от 20 до 60, берем 60
     string str(reinterpret_cast<const char*>(bytes), offset + 60);
-    str = str.substr(offset, str.length() - offset);
+    str = str.substr(offset, 60);
     stringstream stream(str);
 
     // возможно потом можно переделать под оператор >> применив ntoh

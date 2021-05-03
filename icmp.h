@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <basetransport.h>
+#include <pcap/pcap.h>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -17,6 +18,7 @@ class Icmp : public BaseTransport
 
     typedef unsigned char bit8;
     typedef unsigned short bit16;
+    const int icmpSize = 8;
 
     struct IcmpHeader {
         bit8 icmp_type;         // 8 bits: Тип
@@ -30,9 +32,9 @@ class Icmp : public BaseTransport
 public:
     Icmp();
 
-    void deserializeHeader(const u_char *bytes, int offset) override;
-    bool isHeaderEmpty() override;
-    vector<string> getHeaderData() override;
+    virtual void deserializeHeader(const u_char *bytes, int offset);
+    virtual bool isHeaderEmpty();
+    virtual vector<string> getHeaderData();
 };
 
 #endif // ICMP_H

@@ -8,6 +8,8 @@
 #include <udp.h>
 #include <emptytransport.h>
 
+#include <iostream>
+
 class Factory : public QObject
 {
     Q_OBJECT

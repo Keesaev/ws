@@ -15,8 +15,9 @@ bool Network::isHeaderEmpty(){
 }
 
 void Network::deserializeHeader(const u_char *bytes){
-    std::string str(reinterpret_cast<const char*>(bytes), 34);
-    str = str.substr(14, 20);
+    // Читаем последовательность длиной ethernetSize + ipMaxSize
+    std::string str(reinterpret_cast<const char*>(bytes), 14 + ipMaxSize);
+    str = str.substr(14, ipMaxSize);
     std::stringstream stream(str);
 
     stream >> ipHeader.ip_vhl;
