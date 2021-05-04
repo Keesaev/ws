@@ -8,8 +8,6 @@
 #include <string>
 #include <sstream>
 
-#include <iostream>
-
 using namespace std;
 
 class Icmp : public BaseTransport
@@ -33,7 +31,7 @@ public:
     Icmp();
 
     virtual void deserializeHeader(const u_char *bytes, int offset);
-    virtual bool isHeaderEmpty();
+    virtual bool isHeaderInvalid();
     virtual vector<pair<string, string>> getHeaderData();
 };
 

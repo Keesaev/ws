@@ -13,11 +13,9 @@
 
 class FullPacket{
     ? timestamp
-    string dataLinkName;
+    string sourceIp, destIp, protocol, length;
     vector<pair<string, string>> dataLinkFullData;
-    string networkName, senderIp, receiverIp, protocol;
     vector<pair<string, string>> networkFullData;
-    string transportName;
     vector<pair<string, string>> transportFullData;
 }
 

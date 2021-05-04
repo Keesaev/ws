@@ -20,7 +20,7 @@ void Tcp::deserializeHeader(const u_char *bytes, int offset){
     stream.read(reinterpret_cast<char*>(&tcpHeader.tcp_urp), sizeof(bit16));
 }
 
-bool Tcp::isHeaderEmpty() {
+bool Tcp::isHeaderInvalid() {
     unsigned int size_tcp = getOffset()*4;
     if((int)size_tcp < tcpMinHeaderSize || (int)size_tcp > tcpMaxHeaderSize)
         return true;
@@ -31,6 +31,7 @@ bool Tcp::isHeaderEmpty() {
 vector<pair<string, string>> Tcp::getHeaderData(){
 
     vector<pair<string, string>> v = {
+        make_pair("Protocol", "TCP"),
         make_pair("Source port", to_string(htons(tcpHeader.tcp_sport))),
         make_pair("Destination port", to_string(htons(tcpHeader.tcp_dport))),
         make_pair("Sequence number", to_string(htonl(tcpHeader.tcp_seqn))),

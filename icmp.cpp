@@ -16,18 +16,20 @@ void Icmp::deserializeHeader(const u_char *bytes, int offset) {
     stream.read(reinterpret_cast<char*>(&icmpHeader.icmp_rest), sizeof(uint32_t));
 }
 
-bool Icmp::isHeaderEmpty() {
+bool Icmp::isHeaderInvalid() {
     //  TODO
     return false;
 }
 
 vector<pair<string, string>> Icmp::getHeaderData() {
 
-    vector<pair<string, string>> v;
-    v.push_back(make_pair("Type", to_string(static_cast<int>(icmpHeader.icmp_type))));
-    v.push_back(make_pair("Code", to_string(static_cast<int>(icmpHeader.icmp_code))));
-    v.push_back(make_pair("Checksum", to_string(ntohs(icmpHeader.icmp_sum))));
-    v.push_back(make_pair("Options:", to_string(ntohs(icmpHeader.icmp_rest))));
+    vector<pair<string, string>> v = {
+        make_pair("Protocol", "ICMP"),
+        make_pair("Type", to_string(static_cast<int>(icmpHeader.icmp_type))),
+        make_pair("Code", to_string(static_cast<int>(icmpHeader.icmp_code))),
+        make_pair("Checksum", to_string(ntohs(icmpHeader.icmp_sum))),
+        make_pair("Options:", to_string(ntohs(icmpHeader.icmp_rest)))
+    };
 
     return v;
 }

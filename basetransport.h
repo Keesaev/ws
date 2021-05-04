@@ -14,7 +14,7 @@ public:
 
     virtual void deserializeHeader(const u_char *bytes, int offset) = 0;
 
-    virtual bool isHeaderEmpty() = 0;
+    virtual bool isHeaderInvalid() = 0;
 
     virtual vector<pair<string, string>> getHeaderData() = 0;
 

@@ -28,7 +28,7 @@ public:
     Udp();
 
     virtual void deserializeHeader(const u_char *bytes, int offset);
-    virtual bool isHeaderEmpty();
+    virtual bool isHeaderInvalid();
     virtual vector<pair<string, string>> getHeaderData();
 };
 

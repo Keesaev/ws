@@ -6,11 +6,11 @@ UnknownTransport::UnknownTransport()
 }
 
 void UnknownTransport::deserializeHeader(const u_char *bytes, int offset) {
-    // Ничего
+    //
 }
 
-bool UnknownTransport::isHeaderEmpty() {
-    // Ничего
+bool UnknownTransport::isHeaderInvalid() {
+    //
     return false;
 }
 
