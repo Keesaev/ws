@@ -1,20 +1,24 @@
-- Добавить формат заголовка
-    + Ethernet
-        + IP
-            + TCP
-            + UDP
-            + ICMP
-- Вывод всех полей заголовков в принтабельном формате:
-    - Ethernet
-    - IP
-    - TCP
-    - UDP
-    - ICMP
-- Завершение захвата из другого потока
-- Сохранение в файл
 
+Таблица:
+№   Время   Источник    Получатель  Протокол(транс)    Длина
+Ниже:
+-Название протокола
+    -поля
+    -поля
+    -поля
+-Название протокола
+    -поля
+    -поля
+    -поля
 
-
-
+class FullPacket{
+    ? timestamp
+    string dataLinkName;
+    vector<pair<string, string>> dataLinkFullData;
+    string networkName, senderIp, receiverIp, protocol;
+    vector<pair<string, string>> networkFullData;
+    string transportName;
+    vector<pair<string, string>> transportFullData;
+}
 
 

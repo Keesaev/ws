@@ -10,8 +10,10 @@
 #include <network.h>
 #include <stuboutput.h>
 #include <basetransport.h>
-#include <emptytransport.h>
+#include <unknowntransport.h>
 #include <factory.h>
+
+using namespace std;
 
 class Sniffer : public QObject
 {

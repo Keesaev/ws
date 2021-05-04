@@ -4,6 +4,8 @@
 #include <QObject>
 #include <vector>
 
+using namespace std;
+
 class BaseTransport : public QObject
 {
     Q_OBJECT
@@ -14,7 +16,7 @@ public:
 
     virtual bool isHeaderEmpty() = 0;
 
-    virtual std::vector<std::string> getHeaderData() = 0;
+    virtual vector<pair<string, string>> getHeaderData() = 0;
 
     virtual ~BaseTransport(){}
 signals:

@@ -34,7 +34,7 @@ public:
 
     virtual void deserializeHeader(const u_char *bytes, int offset);
     virtual bool isHeaderEmpty();
-    virtual vector<string> getHeaderData();
+    virtual vector<pair<string, string>> getHeaderData();
 };
 
 #endif // ICMP_H

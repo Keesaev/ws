@@ -1,5 +1,5 @@
-#ifndef EMPTYTRANSPORT_H
-#define EMPTYTRANSPORT_H
+#ifndef UNKNOWNTRANSPORT_H
+#define UNKNOWNTRANSPORT_H
 
 #include <QObject>
 #include <basetransport.h>
@@ -8,15 +8,15 @@
 
 using namespace std;
 
-class EmptyTransport : public BaseTransport
+class UnknownTransport : public BaseTransport
 {
     Q_OBJECT
 public:
-    EmptyTransport();
+    UnknownTransport();
 
     virtual void deserializeHeader(const u_char *bytes, int offset);
     virtual bool isHeaderEmpty();
-    virtual vector<string> getHeaderData();
+    virtual vector<pair<string, string>> getHeaderData();
 };
 
-#endif // EMPTYTRANSPORT_H
+#endif // UNKNOWNTRANSPORT_H

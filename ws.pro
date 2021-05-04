@@ -17,7 +17,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         basetransport.cpp \
         datalink.cpp \
-        emptytransport.cpp \
         factory.cpp \
         icmp.cpp \
         main.cpp \
@@ -25,7 +24,8 @@ SOURCES += \
         sniffer.cpp \
         stuboutput.cpp \
         tcp.cpp \
-        udp.cpp
+        udp.cpp \
+        unknowntransport.cpp
 
 LIBS += -lpcap
 
@@ -37,14 +37,14 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     basetransport.h \
     datalink.h \
-    emptytransport.h \
     factory.h \
     icmp.h \
     network.h \
     sniffer.h \
     stuboutput.h \
     tcp.h \
-    udp.h
+    udp.h \
+    unknowntransport.h
 
 DISTFILES += \
     TODO

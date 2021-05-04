@@ -21,13 +21,12 @@ bool Udp::isHeaderEmpty() {
     return false;
 }
 
-vector<string> Udp::getHeaderData() {
-    // TODO
-    cout << "UDP HEADER:\n";
-    cout << "udp_sport: " << ntohs(udpHeader.udp_sport) << "\n";
-    cout << "udp_sport: " << ntohs(udpHeader.udp_dport) << "\n";
-    cout << "udp_sport: " << ntohs(udpHeader.udp_len) << "\n";
-    cout << "udp_sport: " << ntohs(udpHeader.udp_chksum) << "\n";
-    vector<string> v;
+vector<pair<string, string>> Udp::getHeaderData() {
+
+    vector<pair<string, string>> v;
+    v.push_back(make_pair("Source port", to_string(ntohs(udpHeader.udp_sport))));
+    v.push_back(make_pair("Destination port", to_string(ntohs(udpHeader.udp_dport))));
+    v.push_back(make_pair("Header length", to_string(ntohs(udpHeader.udp_len))));
+    v.push_back(make_pair("Checksum", to_string(ntohs(udpHeader.udp_chksum))));
     return v;
 }

@@ -8,8 +8,6 @@
 #include <sstream>
 #include <pcap/pcap.h>
 
-#include <iostream>
-
 using namespace std;
 
 class Udp : public BaseTransport
@@ -24,16 +22,14 @@ class Udp : public BaseTransport
         bit16 udp_dport;        // 16 bits: Destination port
         bit16 udp_len;          // 16 bits: Длина сообщения
         bit16 udp_chksum;       // 16 bits: Контрольная сумма
-    };
-
-    UdpHeader udpHeader;
+    } udpHeader;
 
 public:
     Udp();
 
     virtual void deserializeHeader(const u_char *bytes, int offset);
     virtual bool isHeaderEmpty();
-    virtual vector<string> getHeaderData();
+    virtual vector<pair<string, string>> getHeaderData();
 };
 
 #endif // UDP_H

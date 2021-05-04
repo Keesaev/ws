@@ -73,11 +73,6 @@ void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
     Network *network = new Network();
     BaseTransport *transport;
 
-    unsigned char *payload;
-    const unsigned int size_datalink = 14;
-    unsigned int size_network;
-    unsigned int size_transport;
-
     datalink->deserializeHeader(bytes);
     network->deserializeHeader(bytes);
     if(network->isHeaderEmpty()){
@@ -85,16 +80,14 @@ void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
         delete network;
         return;
     }
-    size_network = network->getHeaderLength() * 4;
-
-    // Тут проблема, скорее всего надо присмотреться к Factory или к наследованию
-    // Перечитать как делаются виртуальные функции
 
     transport = Factory::makeTransport(network->getProtocol());
-    transport->deserializeHeader(bytes, size_datalink + size_network);
+    transport->deserializeHeader(bytes, datalink->getHeaderSize() + network->getHeaderSize());
 
-    network->getHeaderData();
-    transport->getHeaderData();
+    vector<pair<string, string>> v = transport->getHeaderData();
+    for(auto i : v){
+        cout << i.first << ": " << i.second << "\n";
+    }
 
     delete datalink;
     delete network;
@@ -111,11 +104,11 @@ void Sniffer::captureSinglePacket(){
     const u_char *pkt_data;
     int retVal = pcap_next_ex(m_handle, &header, &pkt_data);
     if(retVal == 1){
-        std::cout << "len: " << header->len;
-        std::cout << pkt_data;
+        cout << "len: " << header->len;
+        cout << pkt_data;
     }
     else
-        std::cout << retVal;
+        cout << retVal;
 }
 
 void Sniffer::stopCapture(){

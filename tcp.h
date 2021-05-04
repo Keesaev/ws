@@ -27,8 +27,7 @@ class Tcp : public BaseTransport
         bit16 tcp_dport;   // 16 bits: Порт получателя
         bit32 tcp_seqn;  // 32 bits: Sequence number (порядковый номер)
         bit32 tcp_ack;   // 32 bits: Acknowledgment number (номер подтверждения)
-        bit8 tcp_offx2;    // 8 bits: 4 бита Data offset (длина заголовка) от [20 до 60 байт]
-        // и 4 бита хз чего
+        bit8 tcp_offx2;    // 8 bits: 4 бита Data offset (длина заголовка) и 4 бита зарезервировано
         // TODO
         bit8 tcp_flags;    // 8 bits: Флаги
         bit16 tcp_win;     // 16 bits: Размер окна
@@ -47,7 +46,7 @@ public:
 
     virtual void deserializeHeader(const u_char *bytes, int offset);
     virtual bool isHeaderEmpty();
-    virtual vector<string> getHeaderData();
+    virtual vector<pair<string, string>> getHeaderData();
 };
 
 #endif // TCP_H

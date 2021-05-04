@@ -18,7 +18,7 @@ BaseTransport* Factory::makeTransport(int protocol){
         transport = new Udp();
         break;
     default:
-        transport = new EmptyTransport();
+        transport = new UnknownTransport();
         break;
     }
     return transport;

@@ -1,22 +1,22 @@
-#include "emptytransport.h"
+#include "unknowntransport.h"
 
-EmptyTransport::EmptyTransport()
+UnknownTransport::UnknownTransport()
 {
 
 }
 
-void EmptyTransport::deserializeHeader(const u_char *bytes, int offset) {
+void UnknownTransport::deserializeHeader(const u_char *bytes, int offset) {
     // Ничего
 }
 
-bool EmptyTransport::isHeaderEmpty() {
+bool UnknownTransport::isHeaderEmpty() {
     // Ничего
     return false;
 }
 
-vector<string> EmptyTransport::getHeaderData() {
-    //
-    vector<string> v;
-    v.push_back("No data available");
+vector<pair<string, string>> UnknownTransport::getHeaderData() {
+
+    vector<pair<string, string>> v;
+    v.push_back(make_pair("Protocol unkown", "No data available"));
     return v;
 }

@@ -21,14 +21,13 @@ bool Icmp::isHeaderEmpty() {
     return false;
 }
 
-vector<string> Icmp::getHeaderData() {
-    //  TODO
-    cout << "ICMP HEADER:\n";
-    cout << "icmp_type: " << static_cast<int>(icmpHeader.icmp_type) << "\n";
-    cout << "icmp_code: " << static_cast<int>(icmpHeader.icmp_code) << "\n";
-    cout << "icmp_sum: " << ntohs(icmpHeader.icmp_sum) << "\n";
-    cout << "icmp_rest: " << ntohl(icmpHeader.icmp_rest) << "\n";
+vector<pair<string, string>> Icmp::getHeaderData() {
 
-    vector<string> v;
+    vector<pair<string, string>> v;
+    v.push_back(make_pair("Type", to_string(static_cast<int>(icmpHeader.icmp_type))));
+    v.push_back(make_pair("Code", to_string(static_cast<int>(icmpHeader.icmp_code))));
+    v.push_back(make_pair("Checksum", to_string(ntohs(icmpHeader.icmp_sum))));
+    v.push_back(make_pair("Options:", to_string(ntohs(icmpHeader.icmp_rest))));
+
     return v;
 }
