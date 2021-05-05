@@ -21,6 +21,7 @@ SOURCES += \
         icmp.cpp \
         main.cpp \
         network.cpp \
+        packetdata.cpp \
         sniffer.cpp \
         stuboutput.cpp \
         tcp.cpp \
@@ -40,6 +41,7 @@ HEADERS += \
     factory.h \
     icmp.h \
     network.h \
+    packetdata.h \
     sniffer.h \
     stuboutput.h \
     tcp.h \

@@ -84,10 +84,18 @@ void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
     transport = Factory::makeTransport(network->getProtocol());
     transport->deserializeHeader(bytes, datalink->getHeaderSize() + network->getHeaderSize());
 
-    vector<pair<string, string>> v = transport->getHeaderData();
-    for(auto i : v){
-        cout << i.first << ": " << i.second << "\n";
-    }
+    PacketData packet;
+
+    packet.dataLinkFullData = datalink->getHeaderData();
+    packet.networkFullData = network->getHeaderData();
+    packet.transportFullData = transport->getHeaderData();
+    packet.timestamp = header->ts;
+    packet.sourceIp = network->getSourceIp();
+    packet.destIp = network->getDestIp();
+    packet.protocol = network->getProtocol();
+    packet.length = to_string(header->len);
+
+    //emit packetDeserialized(packet);
 
     delete datalink;
     delete network;

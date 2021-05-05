@@ -11,7 +11,7 @@
     -поля
     -поля
 
-class FullPacket{
+class FullData{
     ? timestamp
     string sourceIp, destIp, protocol, length;
     vector<pair<string, string>> dataLinkFullData;

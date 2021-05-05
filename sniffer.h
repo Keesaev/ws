@@ -12,6 +12,7 @@
 #include <basetransport.h>
 #include <unknowntransport.h>
 #include <factory.h>
+#include <packetdata.h>
 
 using namespace std;
 
@@ -20,7 +21,6 @@ class Sniffer : public QObject
     Q_OBJECT
     char *m_dev;
     pcap_t *m_handle;
-
 
 public:
     explicit Sniffer(QObject *parent = nullptr);
@@ -31,11 +31,11 @@ public:
     void startLoopingCapture();
     void stopLoopingCapture();
     void stopCapture();
+signals:
+    void packetDeserialized(const PacketData &pd);
 private:
     void static handlePacket(u_char *user, const struct pcap_pkthdr *header,
                       const u_char *bytes);
-signals:
-
 };
 
 #endif // SNIFFER_H

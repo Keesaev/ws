@@ -68,6 +68,14 @@ public:
         return ipHeader.ip_p;
     }
 
+    string getSourceIp(){
+        return getAddress(ipHeader.ip_src);
+    }
+
+    string getDestIp(){
+        return getAddress(ipHeader.ip_dst);
+    }
+
 signals:
 
 };

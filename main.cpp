@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include "sniffer.h"
+#include "packetdata.h"
 #include <QDebug>
 
 using namespace std;
