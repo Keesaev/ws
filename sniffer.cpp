@@ -63,12 +63,30 @@ bool Sniffer::initPcap(){
     }
 }
 
-void Sniffer::startLoopingCapture(){
-    pcap_loop(m_handle, 100, handlePacket, NULL);
+void Sniffer::startLoopingCapture(int c){
+
+    if(c == -1){
+        while(true){
+            captureSinglePacket();
+        }
+    }
+    else{
+        while(c--){
+            captureSinglePacket();
+        }
+    }
 }
 
-void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
-                           const u_char *bytes){
+void Sniffer::captureSinglePacket(){
+
+    pcap_pkthdr *header;
+    const u_char *bytes;
+    int retVal = pcap_next_ex(m_handle, &header, &bytes);
+    if(retVal != 1){
+        // Сломанный пакет TODO
+        return;
+    }
+
     DataLink *datalink = new DataLink();
     Network *network = new Network();
     BaseTransport *transport;
@@ -95,28 +113,11 @@ void Sniffer::handlePacket(u_char *user, const pcap_pkthdr *header,
     packet.protocol = network->getProtocol();
     packet.length = to_string(header->len);
 
-    //emit packetDeserialized(packet);
+    emit packetDeserialized(packet);
 
     delete datalink;
     delete network;
     delete transport;
-}
-
-void Sniffer::stopLoopingCapture(){
-    pcap_breakloop(m_handle);
-    stopCapture();
-}
-
-void Sniffer::captureSinglePacket(){
-    pcap_pkthdr *header;
-    const u_char *pkt_data;
-    int retVal = pcap_next_ex(m_handle, &header, &pkt_data);
-    if(retVal == 1){
-        cout << "len: " << header->len;
-        cout << pkt_data;
-    }
-    else
-        cout << retVal;
 }
 
 void Sniffer::stopCapture(){

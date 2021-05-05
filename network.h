@@ -7,6 +7,7 @@
 #include <istream>
 #include <string>
 #include <vector>
+#include <map>
 
 #include <iostream>
 
@@ -22,8 +23,44 @@ class Network : public QObject
     const int ipMinHeaderSize = 20;
     const int ethernetHeaderSize = 14;
 
-    // https://en.wikipedia.org/wiki/IPv4#Header
+    // https://ru.wikipedia.org/wiki/Explicit_Congestion_Notification
+    // https://www.juniper.net/documentation/us/en/software/junos/cos/topics/concept/cos-qfx-series-explicit-congestion-notification-understanding.html
+    map<int, string> ecn = {
+        {0, "Non-ECT - not ECN-capable"},
+        {1, "ECT(1) — Endpoints of the transport protocol are ECN-capable"},
+        {2, "ECT(0)—Endpoints of the transport protocol are ECN-capable"},
+        {3, "CE—Congestion experienced"}
+    };
 
+    // https://ru.wikipedia.org/wiki/DiffServ_Code_Point
+    map<int, string> diffServ = {
+        {0, "CS0"},
+        {8, "CS1"},
+        {16, "CS2"},
+        {24, "CS3"},
+        {32, "CS4"},
+        {40, "CS5"},
+        {48, "CS6"},
+        {56, "CS7"},
+    };
+
+    // https://en.wikipedia.org/wiki/List_of_IP_protocol_numbers
+    map<int, string> transportProts = {
+        {0, "HOPOPT"},
+        {1, "ICMP"},
+        {2, "IGMP"},
+        {4, "IPv4"},
+        {6, "TCP"},
+        {8, "EGP"},
+        {9, "IGP"},
+        {17, "UDP"},
+        {41, "IPv6"},
+        {56, "TLSP"},
+        {88, "EIGRP"},
+        {89, "OSPF"}
+    };
+
+    // https://en.wikipedia.org/wiki/IPv4#Header
     struct IpHeader{
         bit8 ip_vhl;  // 8 bits:   Version (4 bits) + Header Length (4 bits)
         bit8 ip_tos;  // 8 bits:   Type of service (тип обслуживания)
@@ -38,9 +75,10 @@ class Network : public QObject
 
     IpHeader ipHeader;
 
-    std::string getAddress(in_addr addr);
-    std::string getTos();   // 3 бита ToS   TODO
-    std::string getFlags(); // TODO
+    string getAddress(in_addr addr);
+    string getDiffServ();   // 6 бит ip_tos
+    string getECN();        // 2 бита ip_tos
+    string getFlags();      // 3 бита ip_off
 
     int getVersion(){       // Читаем правые 4 бита поля ip_vhl
         return ((ipHeader.ip_vhl) >> 4);
@@ -58,6 +96,7 @@ public:
     vector<pair<string, string>> getHeaderData();
     void deserializeHeader(const u_char* bytes);
     bool isHeaderEmpty();
+    string getProtocolName();
 
     // Читаем левые 4 бита поля ip_vhl
     int getHeaderSize(){

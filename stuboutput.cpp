@@ -2,7 +2,28 @@
 
 StubOutput::StubOutput(QObject *parent) : QObject(parent)
 {
+    s = new Sniffer();
+    QObject::connect(s, &Sniffer::packetDeserialized,
+            this, &StubOutput::onPacketDeserialized);
+    vector<pair<char*, char*>> d;
+    if(s->getDevs(d))
+        for(auto i : d){
+            string a(i.first);
+            string b;
+            if(i.second != NULL)
+                b = i.second;
+            else
+                b = "No description available";
+            cout << a << "\t" << b << "\n";
+        }
 
+    s->setDev(d[0].first);
+    if(s->initPcap())
+        cout << "Device open success\n";
+    else
+        cout << "Device open failure\n";
+    s->startLoopingCapture(100);
+    std::cout << "Stopping\n";
 }
 
 void StubOutput::onPacketDeserialized(const PacketData &pd){

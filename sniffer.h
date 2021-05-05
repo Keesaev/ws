@@ -8,11 +8,12 @@
 
 #include <datalink.h>
 #include <network.h>
-#include <stuboutput.h>
 #include <basetransport.h>
 #include <unknowntransport.h>
 #include <factory.h>
 #include <packetdata.h>
+
+#include <iostream>
 
 using namespace std;
 
@@ -27,15 +28,13 @@ public:
     bool getDevs(std::vector<std::pair<char*, char*>> &d);
     void setDev(char *d);
     bool initPcap();
-    void captureSinglePacket();
-    void startLoopingCapture();
+    void startLoopingCapture(int c);
     void stopLoopingCapture();
     void stopCapture();
 signals:
     void packetDeserialized(const PacketData &pd);
 private:
-    void static handlePacket(u_char *user, const struct pcap_pkthdr *header,
-                      const u_char *bytes);
+    void captureSinglePacket();
 };
 
 #endif // SNIFFER_H
