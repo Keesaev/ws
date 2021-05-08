@@ -20,6 +20,18 @@ class Tcp : public BaseTransport
     const int tcpMaxHeaderSize = 60;
     const int tcpMinHeaderSize = 20;
 
+    // https://en.wikipedia.org/wiki/Transmission_Control_Protocol
+    map<int, string> flags = {
+        {128, "CWR (Cognecion window reduced)\n"},
+        {64, "ECE (ECN-Echo)\n"},
+        {32, "URG (Urgent point)\n"},
+        {16, "ACK (Acknowledgment)\n"},
+        {8, "PSH (Push)\n"},
+        {4, "RST (Reset)\n"},
+        {2, "SYN (Synchronize)\n"},
+        {1, "FIN (Final packet)\n"}
+    };
+
     struct TcpHeader{
         bit16 tcp_sport;   // 16 bits:  Порт отправителя
         bit16 tcp_dport;   // 16 bits: Порт получателя
@@ -35,9 +47,8 @@ class Tcp : public BaseTransport
 
     TcpHeader tcpHeader;
 
-    int getOffset(){
-        return ((tcpHeader.tcp_offx2 & 0xf0) >> 4);
-    }
+    int getOffset();
+    string getFlags();
 
 public:
     Tcp();

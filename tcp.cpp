@@ -31,17 +31,34 @@ bool Tcp::isHeaderInvalid() {
 vector<pair<string, string>> Tcp::getHeaderData(){
 
     vector<pair<string, string>> v = {
-        make_pair("Protocol", "TCP"),
-        make_pair("Source port", to_string(htons(tcpHeader.tcp_sport))),
-        make_pair("Destination port", to_string(htons(tcpHeader.tcp_dport))),
-        make_pair("Sequence number", to_string(htonl(tcpHeader.tcp_seqn))),
-        make_pair("Acknowledgment Number", to_string(htonl(tcpHeader.tcp_ack))),
-        make_pair("Data offset", to_string(getOffset())),
-        make_pair("Flags (TODO)", to_string(static_cast<int>(tcpHeader.tcp_flags))),
-        make_pair("Window size", to_string(htons(tcpHeader.tcp_win))),
-        make_pair("Checksum", to_string(htons(tcpHeader.tcp_sum))),
-        make_pair("Urgent Point", to_string(htons(tcpHeader.tcp_urp)))
+        {"Protocol", "TCP"},
+        {"Source port", to_string(htons(tcpHeader.tcp_sport))},
+        {"Destination port", to_string(htons(tcpHeader.tcp_dport))},
+        {"Sequence number", to_string(htonl(tcpHeader.tcp_seqn))},
+        {"Acknowledgment Number", to_string(htonl(tcpHeader.tcp_ack))},
+        {"Data offset", to_string(getOffset())},
+        {"Flags", getFlags()},
+        {"Window size", to_string(htons(tcpHeader.tcp_win))},
+        {"Checksum", to_string(htons(tcpHeader.tcp_sum))},
+        {"Urgent Point", to_string(htons(tcpHeader.tcp_urp))}
     };
 
     return v;
+}
+
+int Tcp::getOffset(){
+    return ((tcpHeader.tcp_offx2) >> 4);
+}
+
+// https://en.wikipedia.org/wiki/Transmission_Control_Protocol
+// https://networkguru.ru/protokol-transportnogo-urovnia-tcp-chto-nuzhno-znat/
+string Tcp::getFlags(){
+    string s = "";
+    if(tcpHeader.tcp_offx2 & 1)
+        s += "NC (Nonce Sum)\n";
+    for(auto i : flags){
+        if(tcpHeader.tcp_flags & i.first)
+            s += i.second;
+    }
+    return s;
 }

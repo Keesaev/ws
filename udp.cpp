@@ -24,11 +24,11 @@ bool Udp::isHeaderInvalid() {
 vector<pair<string, string>> Udp::getHeaderData() {
 
     vector<pair<string, string>> v = {
-        make_pair("Protocol", "UDP"),
-        make_pair("Source port", to_string(ntohs(udpHeader.udp_sport))),
-        make_pair("Destination port", to_string(ntohs(udpHeader.udp_dport))),
-        make_pair("Header length", to_string(ntohs(udpHeader.udp_len))),
-        make_pair("Checksum", to_string(ntohs(udpHeader.udp_chksum)))
+        {"Protocol", "UDP"},
+        {"Source port", to_string(ntohs(udpHeader.udp_sport))},
+        {"Destination port", to_string(ntohs(udpHeader.udp_dport))},
+        {"Header length", to_string(ntohs(udpHeader.udp_len))},
+        {"Checksum", to_string(ntohs(udpHeader.udp_chksum))}
     };
     return v;
 }

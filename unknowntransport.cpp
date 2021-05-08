@@ -16,7 +16,8 @@ bool UnknownTransport::isHeaderInvalid() {
 
 vector<pair<string, string>> UnknownTransport::getHeaderData() {
 
-    vector<pair<string, string>> v;
-    v.push_back(make_pair("Protocol unkown", "No data available"));
+    vector<pair<string, string>> v = {
+        {"Protocol unkown", "No data available"}
+    };
     return v;
 }

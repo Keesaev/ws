@@ -5,13 +5,24 @@ Network::Network(QObject *parent) : QObject(parent)
 
 }
 
-bool Network::isHeaderEmpty(){ // TODO
-    unsigned int size_ip = getHeaderSize() * 4;
-    if(size_ip < ipMinHeaderSize)
-        return true;
-    else{
-        return false;
-    }
+vector<pair<string, string>> Network::getHeaderData(){
+
+    vector<pair<string, string>> v = {
+        {"Version", to_string(getVersion())},
+        {"Internet Header Length", to_string(getHeaderSize())},
+        {"Differenciated services code point", getDiffServ()},
+        {"Explicit Congestion Notification", getECN()},
+        {"Total length", to_string(ntohs(ipHeader.ip_len))},
+        {"Identification", to_string(ntohs(ipHeader.ip_id))},
+        {"Flags", getFlags()},
+        {"Fragment offset", to_string(getOffset())},
+        {"Time to live", to_string(static_cast<int>(ipHeader.ip_ttl))},
+        {"Protocol", getProtocolName()},
+        {"Header checksum", to_string(ntohs(ipHeader.ip_sum))},
+        {"Source", getAddress(ipHeader.ip_src)},
+        {"Destination", getAddress(ipHeader.ip_dst)}
+    };
+    return v;
 }
 
 void Network::deserializeHeader(const u_char *bytes){
@@ -32,26 +43,40 @@ void Network::deserializeHeader(const u_char *bytes){
     stream.read(reinterpret_cast<char*>(&ipHeader.ip_dst), sizeof(in_addr));
 }
 
-// TODO
+bool Network::isHeaderEmpty(){ // TODO
+    unsigned int size_ip = getHeaderSize() * 4;
+    if(size_ip < ipMinHeaderSize)
+        return true;
+    else{
+        return false;
+    }
+}
 
-vector<pair<string, string>> Network::getHeaderData(){
+int Network::getProtocol(){
+    return ipHeader.ip_p;
+}
 
-    vector<pair<string, string>> v = {
-        make_pair("Version", to_string(getVersion())),
-        make_pair("Internet Header Length", to_string(getHeaderSize())),
-        make_pair("Differenciated services code point", getDiffServ()),
-        make_pair("Explicit Congestion Notification", getECN()),
-        make_pair("Total length", to_string(ntohs(ipHeader.ip_len))),
-        make_pair("Identification", to_string(ntohs(ipHeader.ip_id))),
-        make_pair("Flags", getFlags()),
-        make_pair("Fragment offset", to_string(getOffset())),
-        make_pair("Time to live", to_string(static_cast<int>(ipHeader.ip_ttl))),
-        make_pair("Protocol", getProtocolName()),
-        make_pair("Header checksum", to_string(ntohs(ipHeader.ip_sum))),
-        make_pair("Source", getAddress(ipHeader.ip_src)),
-        make_pair("Destination", getAddress(ipHeader.ip_dst))
-    };
-    return v;
+string Network::getProtocolName(){
+    int p = static_cast<int>(ipHeader.ip_p);
+    string s = to_string(p);
+
+    map<int, string>::iterator res = transportProts.find(p);
+    if(res != transportProts.end())
+        s += " (" + res->second + ")";
+    return s;
+}
+
+// Читаем левые 4 бита поля ip_vhl
+int Network::getHeaderSize(){
+    return (((ipHeader).ip_vhl) & 0x0f) * 4;
+}
+
+string Network::getSourceIp(){
+    return getAddress(ipHeader.ip_src);
+}
+
+string Network::getDestIp(){
+    return getAddress(ipHeader.ip_dst);
 }
 
 string Network::getAddress(in_addr addr){
@@ -59,7 +84,6 @@ string Network::getAddress(in_addr addr){
     inet_ntop(AF_INET, &(addr), cAddr, INET_ADDRSTRLEN);
     return cAddr;
 }
-
 
 string Network::getECN(){
     int e = ipHeader.ip_tos & 3;
@@ -99,12 +123,11 @@ string Network::getFlags(){
     return s;
 }
 
-string Network::getProtocolName(){
-    int p = static_cast<int>(ipHeader.ip_p);
-    string s = to_string(p);
-
-    map<int, string>::iterator res = transportProts.find(p);
-    if(res != transportProts.end())
-        s += " (" + res->second + ")";
-    return s;
+int Network::getVersion(){       // Читаем правые 4 бита поля ip_vhl
+    return ((ipHeader.ip_vhl) >> 4);
 }
+int Network::getOffset(){        // Берем всё кроме левых 3 битов в ip_off
+    return (ntohs(ipHeader.ip_off) & 8191);
+}
+
+

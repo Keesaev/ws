@@ -80,15 +80,8 @@ class Network : public QObject
     string getECN();        // 2 бита ip_tos
     string getFlags();      // 3 бита ip_off
 
-    int getVersion(){       // Читаем правые 4 бита поля ip_vhl
-        return ((ipHeader.ip_vhl) >> 4);
-    }
-    int getPriority(){
-        return ((ipHeader.ip_tos) >> 5);
-    }
-    int getOffset(){        // Берем всё кроме левых 3 битов в ip_off
-        return (ntohs(ipHeader.ip_off) & 8191);
-    }
+    int getVersion();
+    int getOffset();
 
 public:
     explicit Network(QObject *parent = nullptr);
@@ -96,24 +89,11 @@ public:
     vector<pair<string, string>> getHeaderData();
     void deserializeHeader(const u_char* bytes);
     bool isHeaderEmpty();
+    int getHeaderSize();
+    int getProtocol();
     string getProtocolName();
-
-    // Читаем левые 4 бита поля ip_vhl
-    int getHeaderSize(){
-        return (((ipHeader).ip_vhl) & 0x0f) * 4;
-    }
-
-    int getProtocol(){
-        return ipHeader.ip_p;
-    }
-
-    string getSourceIp(){
-        return getAddress(ipHeader.ip_src);
-    }
-
-    string getDestIp(){
-        return getAddress(ipHeader.ip_dst);
-    }
+    string getSourceIp();
+    string getDestIp();
 
 signals:
 

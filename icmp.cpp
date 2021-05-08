@@ -24,11 +24,11 @@ bool Icmp::isHeaderInvalid() {
 vector<pair<string, string>> Icmp::getHeaderData() {
 
     vector<pair<string, string>> v = {
-        make_pair("Protocol", "ICMP"),
-        make_pair("Type", to_string(static_cast<int>(icmpHeader.icmp_type))),
-        make_pair("Code", to_string(static_cast<int>(icmpHeader.icmp_code))),
-        make_pair("Checksum", to_string(ntohs(icmpHeader.icmp_sum))),
-        make_pair("Options:", to_string(ntohs(icmpHeader.icmp_rest)))
+        {"Protocol", "ICMP"},
+        {"Type", to_string(static_cast<int>(icmpHeader.icmp_type))},
+        {"Code", to_string(static_cast<int>(icmpHeader.icmp_code))},
+        {"Checksum", to_string(ntohs(icmpHeader.icmp_sum))},
+        {"Options:", to_string(ntohs(icmpHeader.icmp_rest))}
     };
 
     return v;
